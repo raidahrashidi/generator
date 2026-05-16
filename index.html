@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Prompt Generator Data Syarikat</title>
+
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(180deg,#fff1f7,#f7f3ff);
+  color:#333;
+  padding:14px;
+  padding-bottom:40px;
+}
+.app{max-width:520px;margin:auto}
+.header{text-align:center;margin-bottom:14px}
+.header h1{margin:0;font-size:25px;color:#d9468c}
+.header p{font-size:13px;color:#9b6b86;margin-top:6px}
+
+.top-card,.section-card,.summary{
+  background:white;
+  border-radius:22px;
+  padding:15px;
+  margin-bottom:14px;
+  border:1px solid #ffe1ef;
+  box-shadow:0 6px 16px rgba(0,0,0,.07);
+}
+.top-card{border:2px solid #ffd6e8}
+
+.label-main{font-weight:650;font-size:15px;line-height:1.3;margin-bottom:2px}
+.eng{font-size:12px;color:#a9a9a9;margin-bottom:8px}
+.item{margin-bottom:15px}
+
+input,select,textarea{
+  width:100%;
+  border:1.5px solid #f9c5dc;
+  border-radius:16px;
+  padding:12px;
+  font-size:16px;
+  outline:none;
+  background:#fffafd;
+  color:#444;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#d9468c;
+  box-shadow:0 0 0 3px rgba(217,70,140,.18);
+}
+textarea{
+  min-height:360px;
+  resize:vertical;
+  line-height:1.45;
+  font-family:Consolas,monospace;
+  font-size:13px;
+  caret-color:#d9468c;
+}
+
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.metric{
+  background:#fffafd;
+  border:1px solid #ffd6e8;
+  border-radius:16px;
+  padding:10px;
+  text-align:center;
+}
+.metric small{color:#888;font-size:12px}
+.metric strong{display:block;color:#d9468c;font-size:18px;margin-top:4px}
+
+.mode-box{
+  background:#fffafd;
+  border:1px dashed #ffd6e8;
+  border-radius:16px;
+  padding:12px;
+  font-size:13px;
+  color:#9b6b86;
+  margin-top:10px;
+}
+.mode-badge{
+  display:inline-block;
+  background:#fce7f3;
+  color:#be185d;
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.form-badge{
+  display:inline-block;
+  background:#eef2ff;
+  color:#7c3aed;
+  padding:7px 11px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.generate-btn,.copy-btn,.clear-all{
+  width:100%;
+  border:none;
+  color:white;
+  padding:14px;
+  border-radius:18px;
+  font-size:16px;
+  font-weight:bold;
+  margin-bottom:12px;
+  cursor:pointer;
+}
+.generate-btn{background:#d9468c}
+.copy-btn{background:#9b5de5}
+.clear-all{background:#fce7f3;color:#be185d}
+
+.good{color:#047857;font-weight:900}
+.warn{color:#b45309;font-weight:900}
+.bad{color:#dc2626;font-weight:900}
+.footer{text-align:center;font-size:13px;color:#b47b93;margin-bottom:20px}
+
+@media(max-width:700px){
+  .row,.metric-row{grid-template-columns:1fr}
+}
+
+input::placeholder,
+textarea::placeholder{
+  font-size:13px;
+  color:#9ca3af;
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="header">
+    <h1>✨ Prompt Generator</h1>
+    <p>Generate prompt borang DOSM untuk paste terus ke AI</p>
+  </div>
+
+  <div class="top-card">
+    <!-- <div class="form-badge" id="formBadge">BORANG 337A</div> -->
+
+    <div class="item">
+      <label class="label-main">Pilih borang</label>
+      <div class="eng">Choose form type</div>
+      <select id="formType" onchange="updateFormType()">
+        <option value="337A">Borang 337A</option>
+        <option value="300Ha">Borang 300Ha</option>
+        <option value="300Ja">Borang 300Ja</option>
+      </select>
+    </div>
+
+    <div class="item">
+      <label class="label-main">Nama syarikat</label>
+      <div class="eng">Company name</div>
+      <input id="companyName" placeholder="Contoh: EVA">
+    </div>
+
+    <div class="item">
+      <label class="label-main">Jenis perniagaan</label>
+      <div class="eng">Business type</div>
+      <input id="businessType" placeholder="Contoh: LOGISTIK">
+    </div>
+
+    <div class="row">
+      <div class="item">
+        <label class="label-main">Jumlah pendapatan tahunan</label>
+        <div class="eng">Annual income</div>
+        <input id="income" type="number" placeholder="Contoh: 500000">
+      </div>
+
+      <div class="item">
+        <label class="label-main">Jumlah perbelanjaan</label>
+        <div class="eng">Total expenses</div>
+        <input id="expenses" type="number" placeholder="Contoh: 300000">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="item">
+        <label class="label-main">Jumlah gaji</label>
+        <div class="eng">Total salary</div>
+        <input id="salary" type="number" placeholder="Contoh: 200000">
+      </div>
+
+      <div class="item">
+        <label class="label-main">Jumlah aset akhir tahun</label>
+        <div class="eng">Year-end assets</div>
+        <input id="assets" type="number" placeholder="Contoh: 4600">
+      </div>
+    </div>
+
+    <div class="item">
+      <label class="label-main">Nak naikkan nilai?</label>
+      <div class="eng">Increase value from 2022 to 2026?</div>
+      <select id="increaseOption" onchange="updateModeText()">
+        <option value="auto">AI tentukan kenaikan — maksimum 29%</option>
+        <option value="custom">Saya nak tetapkan sendiri % kenaikan</option>
+        <option value="no">No — guna nilai exact yang user masukkan</option>
+      </select>
+    </div>
+
+    <div id="customPercentBox" style="display:none;">
+      <div class="item">
+        <label class="label-main">Peratus kenaikan (%)</label>
+        <div class="eng">Example: 10, 15, 20, 29</div>
+        <input id="customPercent" type="number" min="0" max="29" placeholder="Contoh: 15">
+      </div>
+    </div>
+
+    <div class="mode-box">
+      <div class="mode-badge" id="modeLabel">AUTO</div>
+      <div id="modeText">Mode: AI akan tentukan kenaikan yang logik, tetapi tidak boleh melebihi 29%.</div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric"><small>Status</small><strong id="statusText">Ready</strong></div>
+      <div class="metric"><small>Borang</small><strong id="formMetric">337A</strong></div>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generatePrompt()">Generate Prompt ✨</button>
+  <button class="copy-btn" onclick="copyPrompt()">Copy Prompt 📋</button>
+  <button class="clear-all" onclick="clearForm()">Clear All 🧹</button>
+
+  <div class="summary">
+    <label class="label-main">Generated Prompt</label>
+    <div class="eng">Copy dan paste prompt ini ke AI</div>
+    <textarea id="output" placeholder="Prompt akan keluar di sini..."></textarea>
+  </div>
+
+  <div class="footer">crafted with 🤍 by raeda<br>
+    any problems/suggestions, contact 0148503394</div>
+</div>
+
+<script>
+function getValue(id){
+  return document.getElementById(id).value.trim();
+}
+
+function money(id){
+  return getValue(id) || "0";
+}
+
+function updateFormType(){
+  const form = getValue("formType");
+  document.getElementById("formBadge").textContent = "BORANG " + form;
+  document.getElementById("formMetric").textContent = form;
+}
+
+function updateModeText(){
+  const mode = getValue("increaseOption");
+  const modeText = document.getElementById("modeText");
+  const modeLabel = document.getElementById("modeLabel");
+  const customBox = document.getElementById("customPercentBox");
+
+  if(mode === "auto"){
+    modeLabel.textContent = "AUTO";
+    customBox.style.display = "none";
+    modeText.textContent = "Mode: AI akan tentukan kenaikan yang logik, tetapi tidak boleh melebihi 29%.";
+  }else if(mode === "custom"){
+    modeLabel.textContent = "CUSTOM %";
+    customBox.style.display = "block";
+    modeText.textContent = "Mode: User tetapkan sendiri peratus kenaikan. AI mesti ikut kadar tersebut.";
+  }else{
+    modeLabel.textContent = "EXACT";
+    customBox.style.display = "none";
+    modeText.textContent = "Mode: AI akan guna nilai yang dimasukkan secara exact. Tiada kenaikan nilai.";
+  }
+}
+
+function buildIntro(){
+  const companyName = getValue("companyName");
+  const businessType = getValue("businessType");
+  const income = money("income");
+  const expenses = money("expenses");
+  const salary = money("salary");
+  const assets = money("assets");
+  const mode = getValue("increaseOption");
+  const customPercent = getValue("customPercent") || "0";
+
+  if(mode === "auto"){
+    return `
+Maklumat syarikat:
+1- Nama syarikat: [${companyName}]
+2- Jenis perniagaan: [${businessType}]
+
+Data syarikat tahun asas (2022):
+
+* Jumlah pendapatan tahunan 2022: RM [${income}]
+* Jumlah perbelanjaan 2022: RM [${expenses}]
+* Jumlah gaji 2022: RM [${salary}]
+* Jumlah aset akhir tahun 2022: RM [${assets}]
+
+Tolong hasilkan anggaran data baru untuk tahun 2026 yang realistik berdasarkan pertumbuhan syarikat di Malaysia.
+
+Syarat penting:
+* Data 2026 mesti logik dan munasabah untuk industri syarikat
+* AI bebas mencadangkan kadar kenaikan yang logik
+* Jumlah pendapatan 2026 TIDAK BOLEH meningkat lebih daripada 29% daripada tahun 2022
+* Jumlah perbelanjaan 2026 TIDAK BOLEH meningkat lebih daripada 29% daripada tahun 2022
+* Jumlah gaji dan aset juga perlu meningkat secara logik
+* Elakkan kenaikan terlalu drastik
+* Semua nombor mesti nombor bulat tanpa perpuluhan
+* Margin keuntungan mesti masih logik
+* Perbelanjaan mesti konsisten dengan pendapatan
+* Gaji pekerja mesti selari dengan pertumbuhan syarikat
+* Nilai aset mesti berkembang secara munasabah
+* Pastikan jumlah keuntungan masih positif dan logik
+
+Kira juga:
+* Pendapatan maksimum 2026
+* Perbelanjaan maksimum 2026
+
+Kemudian cadangkan:
+* Jumlah pendapatan 2026
+* Jumlah perbelanjaan 2026
+* Jumlah gaji 2026
+* Jumlah aset 2026
+`;
+  }
+
+  if(mode === "custom"){
+    return `
+Maklumat syarikat:
+1- Nama syarikat: [${companyName}]
+2- Jenis perniagaan: [${businessType}]
+
+Data syarikat tahun asas (2022):
+
+* Jumlah pendapatan tahunan 2022: RM [${income}]
+* Jumlah perbelanjaan 2022: RM [${expenses}]
+* Jumlah gaji 2022: RM [${salary}]
+* Jumlah aset akhir tahun 2022: RM [${assets}]
+
+Tolong hasilkan data baru untuk tahun 2026 berdasarkan kadar kenaikan yang ditetapkan oleh user.
+
+Kadar kenaikan yang user mahu gunakan: ${customPercent}%
+
+Syarat penting:
+* Gunakan kadar kenaikan ${customPercent}% sebagai panduan utama
+* Jumlah pendapatan 2026 perlu dikira berdasarkan kenaikan ${customPercent}%
+* Jumlah perbelanjaan 2026 perlu dikira berdasarkan kenaikan ${customPercent}%
+* Jumlah gaji dan aset juga perlu meningkat secara logik berdasarkan kadar ini
+* Jika nilai menjadi tidak logik, laraskan sedikit tetapi JANGAN melebihi ${customPercent}%
+* Semua nombor mesti nombor bulat tanpa perpuluhan
+* Margin keuntungan mesti masih logik
+`;
+  }
+
+  return `
+Maklumat syarikat:
+1- Nama syarikat: [${companyName}]
+2- Jenis perniagaan: [${businessType}]
+
+Gunakan nilai berikut secara EXACT:
+
+* Jumlah pendapatan tahunan: RM [${income}]
+* Jumlah perbelanjaan: RM [${expenses}]
+* Jumlah gaji: RM [${salary}]
+* Jumlah aset akhir tahun: RM [${assets}]
+
+Syarat penting:
+* JANGAN naikkan nilai
+* JANGAN ubah jumlah pendapatan, perbelanjaan, gaji dan aset
+* Gunakan semua nilai exact yang user masukkan untuk semua bahagian seterusnya
+* Semua nombor mesti nombor bulat tanpa perpuluhan
+* Semua pecahan mesti balance tepat dengan nilai yang dimasukkan
+`;
+}
+
+function buildBorangSection(){
+  const form = getValue("formType");
+
+  if(form === "337A"){
+    return `
+==================================================
+BORANG 337A — OUTPUT YANG DIPERLUKAN
+==================================================
+
+Sila hasilkan jawapan lengkap untuk Borang 337A yang merangkumi:
+
+1. BAHAGIAN A — Cadangan data tahun 2026 / nilai exact
+2. BAHAGIAN B — Pecahan perbelanjaan operasi
+3. BAHAGIAN C — Pecahan pekerja DOSM
+4. BAHAGIAN D — Susut nilai dan harta tetap
+5. Final auto validation
+
+BAHAGIAN B — PECAHAN PERBELANJAAN OPERASI
+
+Output:
+TABLE — PERBELANJAAN OPERASI
+
+| Kod | Perkara | Jumlah (RM) |
+
+Senarai kategori:
+9.1(a) - Bahan untuk pembaikan dan penyelenggaraan
+9.1(b) - Alat tulis dan bekalan pejabat
+9.1(c) - Tayar dan tiub
+9.1(d) - Bateri
+9.1(e) - Alat ganti dan aksesori
+9.1(f) - Lain-lain
+9.2 - Kos percetakan
+9.3 - Kos perkhidmatan pengiklanan
+9.4 - Air yang dibeli
+9.5 - Tenaga elektrik yang dibeli
+9.6 - Petrol/diesel
+9.7 - Bayaran pembaikan dan penyelenggaraan semasa
+9.8(a) - Perbelanjaan penyelidikan dan pembangunan - dalaman
+9.8(b) - Perbelanjaan penyelidikan dan pembangunan - khidmat luaran
+9.9 - Perbelanjaan perjalanan dalam dan luar negara
+9.10 - Bayaran perakaunan, kesetiausahaan dan audit
+9.11 - Bayaran guaman
+9.12 - Bayaran pengurusan
+9.13 - Perbelanjaan keraian
+9.14 - Bayaran pos dan perkhidmatan kurier
+9.15 - Bayaran bank
+9.16 - Premium insurans dibayar
+9.17 - Komisen dan bayaran agensi
+9.18 - Pembelian perkhidmatan pengangkutan
+9.19 - Pengiklanan dan promosi
+9.20 - Bayaran perkhidmatan profesional lain
+9.21 - Bayaran pemprosesan data dan perkhidmatan IT
+9.22 - Bayaran telekomunikasi
+9.23(a) - Bayaran sewa - tanah
+9.23(b) - Bayaran sewa - jentera dan kelengkapan
+9.23(c) - Bayaran sewa - alat pengangkutan
+9.23(d) - Bayaran sewa - bangunan tempat kediaman
+9.23(e) - Bayaran sewa - bangunan bukan tempat kediaman
+9.23(f) - Bayaran sewa - perabot dan pemasangan
+9.23(g) - Bayaran sewa - peralatan telekomunikasi
+9.23(h) - Bayaran sewa - perkakasan komputer
+9.23(i) - Bayaran sewa - perisian komputer
+9.23(j) - Bayaran sewa - dron
+9.23(k) - Bayaran sewa - lain-lain
+9.24 - Susut nilai / pelunasan
+9.25 - Bayaran faedah
+9.26 - Bayaran ganti rugi
+9.27 - Bayaran keselamatan
+9.28 - Perkhidmatan perantaraan
+9.29 - Bekalan dan simpanan kapal
+9.30 - Bunker
+9.31 - Bayaran pemanduan dan pelabuhan
+9.32 - Pembelian perkhidmatan pemunggahan kapal
+9.33 - Bayaran feri dan tol
+9.34 - Bayaran pengemudian, pendaratan dan penggunaan lapangan terbang
+9.35 - Penyediaan makanan dan minuman penerbangan
+9.39 - Lain-lain perbelanjaan operasi
+9.40(a) - Gaji & upah dibayar
+9.40(d)(i) - Rawatan perubatan percuma
+9.40(e)(i) - KWSP
+9.40(e)(iii) - PERKESO
+9.41 - Bayaran kepada pertubuhan lain yang membekalkan pekerja
+9.42 - Jumlah perbelanjaan 9.1 hingga 9.41
+9.47 - JUMLAH BESAR PERBELANJAAN
+`;
+  }
+
+  if(form === "300Ha"){
+    return `
+==================================================
+BORANG 300Ha — OUTPUT YANG DIPERLUKAN
+==================================================
+
+Sila hasilkan jawapan lengkap untuk Borang 300Ha.
+
+Fokus utama:
+1. Cadangan / nilai exact tahun 2026
+2. Pecahan pendapatan yang sesuai
+3. Pecahan perbelanjaan operasi
+4. Pecahan pekerja mengikut kategori yang sesuai
+5. Pecahan gaji lelaki dan perempuan
+6. Pecahan aset dan susut nilai
+7. Final auto validation
+
+Syarat:
+* Semua nilai mesti balance tepat
+* Semua kategori mesti sesuai dengan industri syarikat
+* Jika kategori tidak relevan, letakkan RM0
+* Jumlah perbelanjaan tidak boleh melebihi jumlah pendapatan
+* Jumlah gaji mesti sama dalam semua bahagian
+* Semua subtotal dan grand total mesti tepat
+`;
+  }
+
+  return `
+==================================================
+BORANG 300Ja — OUTPUT YANG DIPERLUKAN
+==================================================
+
+Sila hasilkan jawapan lengkap untuk Borang 300Ja.
+
+Fokus utama:
+1. Cadangan / nilai exact tahun 2026
+2. Pecahan operasi yang sesuai dengan jenis perniagaan
+3. Pecahan perbelanjaan
+4. Pecahan pekerja dan jumlah gaji
+5. Pecahan aset tetap dan susut nilai
+6. Final auto validation
+
+Syarat:
+* Semua nilai mesti balance tepat
+* Semua nombor mesti nombor bulat
+* Elakkan kategori yang tidak relevan
+* Jumlah gaji mesti konsisten
+* Jumlah aset dan susut nilai mesti logik
+* Semua subtotal dan grand total mesti tepat
+`;
+}
+
+function buildCommonValidation(){
+  return `
+==================================================
+PENTING
+==================================================
+
+Gunakan SEMUA nilai cadangan / nilai exact untuk bahagian seterusnya:
+* pecahan perbelanjaan operasi
+* pecahan pekerja DOSM
+* susut nilai dan aset tetap
+
+JANGAN gunakan nilai lain yang tidak selari dengan data utama.
+
+==================================================
+VALIDATION WAJIB UNTUK GAJI
+==================================================
+
+Gunakan SATU nilai gaji sahaja secara konsisten untuk SEMUA bahagian.
+
+Nilai berikut MESTI sama tepat tanpa sebarang perbezaan:
+* Jumlah gaji dalam data utama
+* Nilai gaji & upah dibayar dalam bahagian perbelanjaan
+* Jumlah keseluruhan gaji dalam pecahan pekerja
+* Jumlah semua kategori gaji lelaki + perempuan
+* Jumlah dalam table ringkasan pekerja
+
+Jika terdapat perbezaan walaupun RM1, laraskan semula semua pecahan gaji secara automatik sehingga balance tepat.
+
+==================================================
+PECAHAN PEKERJA DOSM
+==================================================
+
+Gunakan kategori yang sesuai:
+* 5.3.1 Pengurus
+* 5.3.2 Profesional
+* 5.3.3 Juruteknik dan Profesional Bersekutu
+* 5.3.4 Pekerja Sokongan Perkeranian
+* 5.3.5 Pekerja Perkhidmatan dan Jualan
+* 5.3.6 Pekerja Kemahiran dan Pekerja Pertukangan Yang Berkaitan
+* 5.3.7 Operator Mesin dan Loji, dan Pemasang
+* 5.3.8 Pekerja Asas
+* 5.4 Pekerja sambilan
+
+Output dalam 3 TABLE:
+TABLE 1 — PEKERJA LELAKI
+TABLE 2 — PEKERJA PEREMPUAN
+TABLE 3 — RINGKASAN
+
+==================================================
+SUSUT NILAI DAN HARTA TETAP
+==================================================
+
+Gunakan jumlah aset utama untuk pecahan aset dan susut nilai.
+
+Output:
+TABLE — PERBELANJAAN MODAL DAN NILAI HARTA TETAP
+
+| Jenis Aset | Nilai Buku Bersih Awal Tahun | Susut Nilai | Nilai Buku Bersih Akhir Tahun |
+
+Kategori aset:
+4.1.1(a) Tempat kediaman
+4.1.1(b) Bukan tempat kediaman
+4.1.1(c) Binaan lain kecuali pembangunan tanah
+4.1.4(a) Kereta penumpang
+4.1.4(b) Kapal, kapal tangki, tongkang, bot, sampan dsb.
+4.1.4(c) Bas
+4.1.4(d) Pesawat udara
+4.1.4(e) Keretapi
+4.1.4(f) Lori, van, pikap dsb.
+4.1.4(g) Lain-lain
+4.1.5(a) Perkakasan komputer
+4.1.5(b) Perisian komputer
+4.1.5(c) Peralatan telekomunikasi
+4.1.6(a) Jentera & kelengkapan utama
+4.1.6(b) Dron
+4.2.1 Patent
+4.2.2 Muhibah
+4.2.3 Kerja dalam pelaksanaan
+4.3 Lain-lain
+4.4 JUMLAH
+
+==================================================
+FINAL AUTO VALIDATION
+==================================================
+
+Sebelum hasilkan jawapan akhir:
+1. Semak semula semua subtotal
+2. Semak semua grand total
+3. Pastikan semua jumlah balance tepat
+4. Pastikan jumlah besar perbelanjaan sama tepat dengan jumlah utama
+5. Pastikan jumlah gaji semua bahagian sama tepat
+6. Pastikan jumlah semua gaji lelaki + perempuan = jumlah ringkasan pekerja
+7. Pastikan jumlah susut nilai sama dengan nilai susut nilai dalam perbelanjaan
+8. Pastikan jumlah perbelanjaan tidak melebihi jumlah pendapatan
+9. Jika tidak balance walaupun RM1, laraskan semula secara automatik
+10. JANGAN paparkan output akhir jika masih tidak balance walaupun kecil
+`;
+}
+
+function generatePrompt(){
+  const companyName = getValue("companyName");
+  const businessType = getValue("businessType");
+
+  if(!companyName || !businessType){
+    alert("Sila isi nama syarikat dan jenis perniagaan dulu.");
+    return;
+  }
+
+  const prompt = `
+${buildIntro()}
+
+${buildBorangSection()}
+
+${buildCommonValidation()}
+`;
+
+  document.getElementById("output").value = prompt.trim();
+  document.getElementById("statusText").textContent = "Generated";
+  document.getElementById("statusText").className = "good";
+}
+
+function copyPrompt(){
+  const output = document.getElementById("output");
+
+  if(!output.value.trim()){
+    alert("Generate prompt dulu ✨");
+    return;
+  }
+
+  navigator.clipboard.writeText(output.value)
+    .then(()=>{
+      document.getElementById("statusText").textContent = "Copied";
+      document.getElementById("statusText").className = "good";
+      alert("Prompt copied! 📋");
+    })
+    .catch(()=>{
+      output.select();
+      document.execCommand("copy");
+      alert("Prompt copied secara manual backup 📋");
+    });
+}
+
+function clearForm(){
+  if(!confirm("Clear all data?")) return;
+
+  document.querySelectorAll("input").forEach(input=>input.value="");
+  document.getElementById("formType").value = "337A";
+  document.getElementById("increaseOption").value = "auto";
+  document.getElementById("output").value = "";
+  document.getElementById("statusText").textContent = "Ready";
+  document.getElementById("statusText").className = "";
+  updateFormType();
+  updateModeText();
+}
+
+updateFormType();
+updateModeText();
+</script>
+</body>
+</html>
