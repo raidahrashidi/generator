@@ -16,9 +16,9 @@ body{
   padding-bottom:40px;
 }
 .app{max-width:520px;margin:auto}
-.header{text-align:center;margin-bottom:14px}
-.header h1{margin:0;font-size:25px;color:#d9468c}
-.header p{font-size:13px;color:#9b6b86;margin-top:6px}
+.header{text-align:center;margin-bottom:24px;padding-top:10px;}
+.header h1{margin:0;font-size:32px;line-height:1.1;margin-bottom:10px;color:#d9468c}
+.header p{font-size:15px;line-height:1.5;color:#9b6b86;margin-top:6px}
 
 .top-card,.section-card,.summary{
   background:white;
@@ -29,10 +29,13 @@ body{
   box-shadow:0 6px 16px rgba(0,0,0,.07);
 }
 .top-card{border:2px solid #ffd6e8}
+.top-card{
+  padding:18px;
+}
 
 .label-main{font-weight:650;font-size:15px;line-height:1.3;margin-bottom:2px}
 .eng{font-size:12px;color:#a9a9a9;margin-bottom:8px}
-.item{margin-bottom:15px}
+.item{margin-bottom:20px}
 
 input,select,textarea{
   width:100%;
@@ -196,9 +199,9 @@ textarea::placeholder{
       <label class="label-main">Nak naikkan nilai?</label>
       <div class="eng">Increase value from 2022 to 2026?</div>
       <select id="increaseOption" onchange="updateModeText()">
-        <option value="auto">AI tentukan kenaikan — maksimum 29%</option>
+        <option value="auto">AI tentukan kenaikan, maksimum 29%</option>
         <option value="custom">Saya nak tetapkan sendiri % kenaikan</option>
-        <option value="no">No — guna nilai exact yang user masukkan</option>
+        <option value="no">No, guna nilai exact</option>
       </select>
     </div>
 
