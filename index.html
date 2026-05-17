@@ -196,6 +196,12 @@ textarea::placeholder{
     </div>
 
     <div class="item">
+      <label class="label-main">Jumlah bilangan pekerja <span style="color:#aaa;font-weight:400;">(optional)</span></label>
+      <div class="eng">Total employees — leave blank if unsure</div>
+      <input id="totalEmployees" type="number" min="0" placeholder="Contoh: 9">
+    </div>
+
+    <div class="item">
       <label class="label-main">Nak naikkan nilai?</label>
       <div class="eng">Increase value from 2022 to 2026?</div>
       <select id="increaseOption" onchange="updateModeText()">
@@ -261,7 +267,8 @@ function money(id){
 
 function updateFormType(){
   const form = getValue("formType");
-  document.getElementById("formBadge").textContent = "BORANG " + form;
+  const badge = document.getElementById("formBadge");
+  if (badge) badge.textContent = "BORANG " + form;
   document.getElementById("formMetric").textContent = form;
 }
 
@@ -293,14 +300,18 @@ function buildIntro(){
   const expenses = money("expenses");
   const salary = money("salary");
   const assets = money("assets");
+  const totalEmployees = getValue("totalEmployees");
+  const employeeText = totalEmployees
+    ? `* Jumlah bilangan pekerja: [${totalEmployees}] orang`
+    : `* Jumlah bilangan pekerja: [AI anggarkan secara logik berdasarkan jumlah gaji, pendapatan dan jenis perniagaan]`;
   const mode = getValue("increaseOption");
   const customPercent = getValue("customPercent") || "0";
 
   if(mode === "auto"){
     return `
 Maklumat syarikat:
-1- Nama syarikat: [${companyName}]
-2- Jenis perniagaan: [${businessType}]
+1- Nama syarikat: [${companyName || "Tidak dinyatakan"}]
+2- Jenis perniagaan: [${businessType || "Tidak dinyatakan"}]
 
 Data syarikat tahun asas (2022):
 
@@ -308,6 +319,7 @@ Data syarikat tahun asas (2022):
 * Jumlah perbelanjaan 2022: RM [${expenses}]
 * Jumlah gaji 2022: RM [${salary}]
 * Jumlah aset akhir tahun 2022: RM [${assets}]
+${employeeText}
 
 Tolong hasilkan anggaran data baru untuk tahun 2026 yang realistik berdasarkan pertumbuhan syarikat di Malaysia.
 
@@ -340,8 +352,8 @@ Kemudian cadangkan:
   if(mode === "custom"){
     return `
 Maklumat syarikat:
-1- Nama syarikat: [${companyName}]
-2- Jenis perniagaan: [${businessType}]
+1- Nama syarikat: [${companyName || "Tidak dinyatakan"}]
+2- Jenis perniagaan: [${businessType || "Tidak dinyatakan"}]
 
 Data syarikat tahun asas (2022):
 
@@ -349,6 +361,7 @@ Data syarikat tahun asas (2022):
 * Jumlah perbelanjaan 2022: RM [${expenses}]
 * Jumlah gaji 2022: RM [${salary}]
 * Jumlah aset akhir tahun 2022: RM [${assets}]
+${employeeText}
 
 Tolong hasilkan data baru untuk tahun 2026 berdasarkan kadar kenaikan yang ditetapkan oleh user.
 
@@ -367,8 +380,8 @@ Syarat penting:
 
   return `
 Maklumat syarikat:
-1- Nama syarikat: [${companyName}]
-2- Jenis perniagaan: [${businessType}]
+1- Nama syarikat: [${companyName || "Tidak dinyatakan"}]
+2- Jenis perniagaan: [${businessType || "Tidak dinyatakan"}]
 
 Gunakan nilai berikut secara EXACT:
 
@@ -376,6 +389,7 @@ Gunakan nilai berikut secara EXACT:
 * Jumlah perbelanjaan: RM [${expenses}]
 * Jumlah gaji: RM [${salary}]
 * Jumlah aset akhir tahun: RM [${assets}]
+${employeeText}
 
 Syarat penting:
 * JANGAN naikkan nilai
@@ -422,9 +436,6 @@ Senarai kategori:
 9.4 - Air yang dibeli
 9.5 - Tenaga elektrik yang dibeli
 9.6 - Petrol/diesel
-9.7 - Bayaran pembaikan dan penyelenggaraan semasa
-9.8(a) - Perbelanjaan penyelidikan dan pembangunan - dalaman
-9.8(b) - Perbelanjaan penyelidikan dan pembangunan - khidmat luaran
 9.9 - Perbelanjaan perjalanan dalam dan luar negara
 9.10 - Bayaran perakaunan, kesetiausahaan dan audit
 9.11 - Bayaran guaman
@@ -436,7 +447,6 @@ Senarai kategori:
 9.17 - Komisen dan bayaran agensi
 9.18 - Pembelian perkhidmatan pengangkutan
 9.19 - Pengiklanan dan promosi
-9.20 - Bayaran perkhidmatan profesional lain
 9.21 - Bayaran pemprosesan data dan perkhidmatan IT
 9.22 - Bayaran telekomunikasi
 9.23(a) - Bayaran sewa - tanah
@@ -453,9 +463,6 @@ Senarai kategori:
 9.26 - Bayaran ganti rugi
 9.27 - Bayaran keselamatan
 9.28 - Perkhidmatan perantaraan
-9.29 - Bekalan dan simpanan kapal
-9.30 - Bunker
-9.31 - Bayaran pemanduan dan pelabuhan
 9.32 - Pembelian perkhidmatan pemunggahan kapal
 9.33 - Bayaran feri dan tol
 9.34 - Bayaran pengemudian, pendaratan dan penggunaan lapangan terbang
@@ -503,8 +510,6 @@ TABLE — PERBELANJAAN OPERASI
 9.5 - Tenaga elektrik yang dibeli
 9.6 - Petrol/diesel
 9.7 - Bayaran pembaikan dan penyelenggaraan semasa
-9.8(a) - Perbelanjaan penyelidikan dan pembangunan - dalaman
-9.8(b) - Perbelanjaan penyelidikan dan pembangunan - khidmat luaran
 9.9 - Perbelanjaan perjalanan dalam dan luar negara
 9.10 - Bayaran perakaunan, kesetiausahaan dan audit
 9.11 - Bayaran guaman
@@ -516,7 +521,6 @@ TABLE — PERBELANJAAN OPERASI
 9.17 - Komisen dan bayaran agensi
 9.18 - Pembelian perkhidmatan pengangkutan
 9.19 - Pengiklanan dan promosi
-9.20 - Bayaran perkhidmatan profesional lain
 9.21 - Bayaran pemprosesan data dan perkhidmatan IT
 9.22 - Bayaran telekomunikasi
 9.23(a) - Bayaran sewa - tanah
@@ -531,13 +535,8 @@ TABLE — PERBELANJAAN OPERASI
 9.24 - Susut nilai / pelunasan
 9.27 - Bayaran keselamatan
 9.28 - Perkhidmatan perantaraan
-9.29 - Bekalan dan simpanan kapal
-9.30 - Bunker
 9.31 - Bayaran pemanduan dan pelabuhan
-9.32 - Pembelian perkhidmatan pemunggahan kapal
 9.33 - Bayaran feri dan tol
-9.34 - Bayaran pengemudian, pendaratan dan penggunaan lapangan terbang
-9.35 - Penyediaan makanan dan minuman penerbangan
 9.40(a) - Gaji & upah dibayar
 9.40(d)(i) - Rawatan perubatan percuma
 9.40(e)(i) - KWSP
@@ -667,6 +666,15 @@ PECAHAN PEKERJA DOSM
 ==================================================
 
 Gunakan jumlah gaji utama untuk pecahan pekerja DOSM.
+
+Jika user memasukkan jumlah bilangan pekerja:
+* Gunakan jumlah pekerja tersebut secara EXACT
+* Jangan tambah atau kurangkan jumlah pekerja
+* Pecahkan jumlah tersebut kepada lelaki/perempuan, warganegara/bukan warganegara, kategori DOSM dan kelulusan
+
+Jika user TIDAK memasukkan jumlah bilangan pekerja:
+* AI mesti anggarkan jumlah pekerja secara logik berdasarkan jumlah gaji tahunan, pendapatan, jenis perniagaan dan saiz syarikat
+* Pastikan purata gaji bulanan realistik
 
 Gunakan kategori yang sesuai:
 * 5.3.1 Pengurus
@@ -899,8 +907,6 @@ Kategori aset:
 4.1.1(c) Binaan lain kecuali pembangunan tanah
 4.1.4(a) Kereta penumpang
 4.1.4(c) Bas
-4.1.4(d) Pesawat udara
-4.1.4(e) Keretapi
 4.1.4(f) Lori, van, pikap dsb.
 4.1.5(a) Perkakasan komputer
 4.1.5(b) Perisian komputer
@@ -931,10 +937,10 @@ function generatePrompt(){
   const companyName = getValue("companyName");
   const businessType = getValue("businessType");
 
-  if(!companyName || !businessType){
-    alert("Sila isi nama syarikat dan jenis perniagaan dulu.");
-    return;
-  }
+  // if(!companyName || !businessType){
+  //   alert("Sila isi nama syarikat dan jenis perniagaan dulu.");
+  //   return;
+  // }
 
   const prompt = `
 ${buildIntro()}
