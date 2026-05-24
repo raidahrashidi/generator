@@ -461,6 +461,55 @@ Syarat:
 * Semua subtotal dan grand total mesti tepat
 * 9.1 - Kos barang yang dijual, wajib ada nilai dan selalunya nilainya besar
 
+==================================================
+VALIDATION WAJIB UNTUK KWSP & PERKESO
+==================================================
+
+KWSP dan PERKESO adalah WAJIB untuk pekerja bergaji dan tidak dibenarkan RM0 kecuali benar-benar tiada pekerja bergaji.
+
+Syarat wajib:
+
+* Jika jumlah pekerja > 0 DAN jumlah gaji > RM0:
+
+9.32(e)(i) - KWSP
+= sekitar 11% hingga 13% daripada
+9.32(a) Gaji & upah dibayar
+
+9.32(e)(iii) - PERKESO
+= sekitar 1% hingga 3%
+daripada 9.32(a) Gaji & upah dibayar
+
+Contoh:
+
+Jika
+9.32(a) = RM100000
+
+Maka:
+
+KWSP ≈ RM11000–13000
+PERKESO ≈ RM1000–3000
+
+WAJIB:
+
+* KWSP > RM0
+* PERKESO > RM0
+* KWSP mesti lebih besar daripada PERKESO
+* Nilai mesti nombor bulat
+* Nilai mesti realistik di Malaysia
+
+Jika jumlah perbelanjaan berubah:
+
+* Laraskan kategori perbelanjaan lain secara automatik
+* Kekalkan jumlah besar perbelanjaan (9.40) EXACT sama dengan nilai utama
+* JANGAN ubah jumlah gaji
+* JANGAN ubah jumlah pendapatan
+* JANGAN ubah jumlah aset
+
+JANGAN hasilkan output jika:
+- KWSP = RM0
+- PERKESO = RM0
+- jumlah tidak balance
+
 `;
   }
 
